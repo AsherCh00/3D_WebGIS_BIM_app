@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: js/cesium3D.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: js/cesium3D.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict"
+
+/**
+ * @global 
+ * 
+ * @description  Cesuim global variable
+ */
+let viewer;
+
+/**
+ * @global 
+ * 
+ * @description  Cesuim global variable layer
+ */
+let cesiumLayers = [];
+
+/**
+ * @global 
+ * 
+ * @description  Cesuim global variable url
+ */
+let url = 'https://cege0043-30.cs.ucl.ac.uk/api/geojson24/getgeojson/cege0043/formdata/id/location';
+
+/**
+ * @function 
+ * 
+ * @description load Cesuim data and global
+ */
+function loadCesium() {
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiN2NhNjVlMy03YTZmLTRlNzktYjRmYi0zNjg0ZWRhYmViN2MiLCJpZCI6MTU2NjMsImlhdCI6MTY5NzM0OTM3Mn0.MIh_LeyAbUT5eysD03v9atH__XQFR0Nk_93nslFT9Cs';
+
+    // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
+
+    let imageryProviders = Cesium.createDefaultImageryProviderViewModels();
+    var selectedImageryProviderIndex = 6;  // MapBox Street is 5th in the list.
+    console.log("imagery");
+
+    // Ellipsoid.
+    let ellipsoid = Cesium.Ellipsoid.WGS84;
+
+    // 
+    viewer = new Cesium.Viewer('cesium', {
+        imageryProviderViewModels: imageryProviders,
+        selectedImageryProviderViewModel: imageryProviders[selectedImageryProviderIndex],
+        ellipsoid: ellipsoid
+    });
+
+    console.log(viewer)
+
+    // let viewer = new Cesium.Viewer('cesiumContainer', {
+    //     imageryProviderViewModels: imageryProviders,
+    //     selectedImageryProviderViewModel: imageryProviders[selectedImageryProviderIndex],
+    //     ellipsoid: ellipsoid
+    // });
+
+}
+
+/**
+ * @function 
+ * 
+ * @description process Petrol Station Data read the data in from the fake petrol station data form
+ * &lt;br>and create a string that can be used to post the data to a server via AJAX post
+ */
+function showCesium() {
+    // removeAllMapData();
+
+    showDiv('cesiumWrapper');
+}
+
+/**
+ * @function 
+ * 
+ * @description hide Cesium Div
+ */
+function hideCesium() {
+    // removeAllMapData();
+
+    showDiv('mapWrapper');
+}
+
+/**
+ * @function 
+ * 
+ * @description load GeoJSON Cesium by URL
+ * 
+ */
+function loadGeoJSONCesiumURL(url, layerName, fitBounds) {
+    let style = {
+        stroke: Cesium.Color.BLUE,
+        fill: Cesium.Color.BLUE,
+        strokeWidth: 3,
+        markerSymbol: 'X'
+    };
+
+    let newLayer = new Cesium.GeoJsonDataSource();
+    newLayer.load(url, style);
+    console.log(viewer);
+    console.log(newLayer);
+    viewer.dataSources.add(newLayer);
+
+
+    // fly to the extent if required
+    if (fitBounds) {
+        viewer.flyTo(newLayer);
+    }
+
+    // now add the datasource into an array
+    // so that we can remove it later if necessary
+    cesiumLayers.push({ name: layerName, dataSource: newLayer })
+
+}
+
+/**
+ * @function 
+ * 
+ * @description Add Form Data To Cesium global
+ * 
+ */
+function addFormDataToCesium() {
+    // first show the Cesium map just in case it is not visible
+    showDiv('cesiumWrapper');
+
+    // NB do not hard code the URL 
+    // use document.location
+    let geoJSONRoute = 'geojson24';
+    let url = document.location.origin + "/api/" + geoJSONRoute + "/petrolStationsByUser/"+user_id;
+
+    console.log(url);
+    loadGeoJSONCesiumURL(url, "formdata", true)
+}
+
+/**
+ * @function 
+ * 
+ * @description remove All 3D cesium data
+ * 
+ */
+function removeAll3Ddata() {
+    for (let i = 0; i &lt; cesiumLayers.length; i++) {
+        viewer.dataSources.remove(cesiumLayers[i].dataSource);
+    }
+}
+
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="eData.dateOptions.html">dateOptions</a></li><li><a href="moment.tz.html">tz</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addArrayButtonListener">addArrayButtonListener</a></li><li><a href="global.html#addFormDataToCesium">addFormDataToCesium</a></li><li><a href="global.html#addLayerToArray">addLayerToArray</a></li><li><a href="global.html#addLayerToLayerControl">addLayerToLayerControl</a></li><li><a href="global.html#addLayerUsingArray">addLayerUsingArray</a></li><li><a href="global.html#addLayersToSelectArray">addLayersToSelectArray</a></li><li><a href="global.html#buildingsLayer">buildingsLayer</a></li><li><a href="global.html#calcDistanceFromFixedPoint">calcDistanceFromFixedPoint</a></li><li><a href="global.html#calcDistanceToPopPoint">calcDistanceToPopPoint</a></li><li><a href="global.html#calculateDistance">calculateDistance</a></li><li><a href="global.html#cancelFormSubmission">cancelFormSubmission</a></li><li><a href="global.html#cesiumLayers">cesiumLayers</a></li><li><a href="global.html#closeAssetData">closeAssetData</a></li><li><a href="global.html#closeDialog">closeDialog</a></li><li><a href="global.html#closeEarthquakeForm">closeEarthquakeForm</a></li><li><a href="global.html#closePetrolStationForm">closePetrolStationForm</a></li><li><a href="global.html#closePetrolStationLayer">closePetrolStationLayer</a></li><li><a href="global.html#closePriceQueueForm">closePriceQueueForm</a></li><li><a href="global.html#closeStationPriceForm">closeStationPriceForm</a></li><li><a href="global.html#currentPopup">currentPopup</a></li><li><a href="global.html#distanceFromPoint">distanceFromPoint</a></li><li><a href="global.html#drawHeatmap">drawHeatmap</a></li><li><a href="global.html#errorPositionifthereisanerrorinthelocationtrackingservice,runthiscode">errorPositionif there is an error in the location tracking service, run this code</a></li><li><a href="global.html#hideAllDivs">hideAllDivs</a></li><li><a href="global.html#hideCesium">hideCesium</a></li><li><a href="global.html#includeHTML">includeHTML</a></li><li><a href="global.html#insertResult">insertResult</a></li><li><a href="global.html#isValidDate">isValidDate</a></li><li><a href="global.html#keyPressZoomToPoint">keyPressZoomToPoint</a></li><li><a href="global.html#layerArrayList">layerArrayList</a></li><li><a href="global.html#layerControl">layerControl</a></li><li><a href="global.html#listLayersUsingArray">listLayersUsingArray</a></li><li><a href="global.html#loadArrayLayer">loadArrayLayer</a></li><li><a href="global.html#loadCesium">loadCesium</a></li><li><a href="global.html#loadGeoJSONCesiumURL">loadGeoJSONCesiumURL</a></li><li><a href="global.html#loadMap">loadMap</a></li><li><a href="global.html#locationTrackerId">locationTrackerId</a></li><li><a href="global.html#mapQueueLengthToValue">mapQueueLengthToValue</a></li><li><a href="global.html#markerGroup">markerGroup</a></li><li><a href="global.html#measureDivLoadGraph">measureDivLoadGraph</a></li><li><a href="global.html#measureDivLoadPetrolGraph">measureDivLoadPetrolGraph</a></li><li><a href="global.html#measureDivLoadPetrolGraph2">measureDivLoadPetrolGraph2</a></li><li><a href="global.html#mymap">mymap</a></li><li><a href="global.html#onMapClick">onMapClick</a></li><li><a href="global.html#onMapClickDiv">onMapClickDiv</a></li><li><a href="global.html#petrolStationLayer">petrolStationLayer</a></li><li><a href="global.html#pointToLayer">pointToLayer</a></li><li><a href="global.html#postResize">postResize</a></li><li><a href="global.html#processEarthquakeData">processEarthquakeData</a></li><li><a href="global.html#processPetrolStationData">processPetrolStationData</a></li><li><a href="global.html#processPriceQueueData">processPriceQueueData</a></li><li><a href="global.html#processWindowResize">processWindowResize</a></li><li><a href="global.html#removeAll3Ddata">removeAll3Ddata</a></li><li><a href="global.html#removeAllMapData">removeAllMapData</a></li><li><a href="global.html#removeArrayButtonListener">removeArrayButtonListener</a></li><li><a href="global.html#removeBuildings">removeBuildings</a></li><li><a href="global.html#removeClosestStations">removeClosestStations</a></li><li><a href="global.html#removeFlag">removeFlag</a></li><li><a href="global.html#removeLayerArray">removeLayerArray</a></li><li><a href="global.html#removeLayerUsingArray">removeLayerUsingArray</a></li><li><a href="global.html#removeNoPriceInfo">removeNoPriceInfo</a></li><li><a href="global.html#removeOptions">removeOptions</a></li><li><a href="global.html#removeQueueLengthUnknown">removeQueueLengthUnknown</a></li><li><a href="global.html#removeRooms">removeRooms</a></li><li><a href="global.html#removeSensors">removeSensors</a></li><li><a href="global.html#removeUniversity">removeUniversity</a></li><li><a href="global.html#roomsLayer">roomsLayer</a></li><li><a href="global.html#saveDialog">saveDialog</a></li><li><a href="global.html#sensorsLayer">sensorsLayer</a></li><li><a href="global.html#serviceUrl_id">serviceUrl_id</a></li><li><a href="global.html#showBuildings">showBuildings</a></li><li><a href="global.html#showCesium">showCesium</a></li><li><a href="global.html#showClosestStations">showClosestStations</a></li><li><a href="global.html#showDialog">showDialog</a></li><li><a href="global.html#showDiv">showDiv</a></li><li><a href="global.html#showEarthquakeForms">showEarthquakeForms</a></li><li><a href="global.html#showEarthquakesGraph">showEarthquakesGraph</a></li><li><a href="global.html#showGraph">showGraph</a></li><li><a href="global.html#showGraphStation">showGraphStation</a></li><li><a href="global.html#showGraphStation2">showGraphStation2</a></li><li><a href="global.html#showLayerList">showLayerList</a></li><li><a href="global.html#showLayerToLoad">showLayerToLoad</a></li><li><a href="global.html#showNoPriceInfo">showNoPriceInfo</a></li><li><a href="global.html#showPetrolStation">showPetrolStation</a></li><li><a href="global.html#showPosition">showPosition</a></li><li><a href="global.html#showPosition_Pr">showPosition_Pr</a></li><li><a href="global.html#showPriceDialog">showPriceDialog</a></li><li><a href="global.html#showQueueLengthUnknown">showQueueLengthUnknown</a></li><li><a href="global.html#showRooms">showRooms</a></li><li><a href="global.html#showSensors">showSensors</a></li><li><a href="global.html#showStationBarGarph">showStationBarGarph</a></li><li><a href="global.html#showStationBarGarph2">showStationBarGarph2</a></li><li><a href="global.html#showStationCesium">showStationCesium</a></li><li><a href="global.html#showStationHeatMap">showStationHeatMap</a></li><li><a href="global.html#showStationPriceDialog">showStationPriceDialog</a></li><li><a href="global.html#showStationShortestQueue">showStationShortestQueue</a></li><li><a href="global.html#showUniversity">showUniversity</a></li><li><a href="global.html#showUserRanking">showUserRanking</a></li><li><a href="global.html#switchLocationServicesOn_Pr">switchLocationServicesOn_Pr</a></li><li><a href="global.html#swtichLocationServicesOff">swtichLocationServicesOff</a></li><li><a href="global.html#swtichLocationServicesOn">swtichLocationServicesOn</a></li><li><a href="global.html#swtichLocationServicesOn2">swtichLocationServicesOn2</a></li><li><a href="global.html#testInsertData">testInsertData</a></li><li><a href="global.html#universityLayer">universityLayer</a></li><li><a href="global.html#url">url</a></li><li><a href="global.html#user_id">user_id</a></li><li><a href="global.html#viewer">viewer</a></li><li><a href="global.html#wrap">wrap</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 17 2024 06:07:22 GMT+0100 (British Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

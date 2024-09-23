@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: js/graph.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: js/graph.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
+
+/**
+ * @function showEarthquakesGraph
+ * 
+ * @description show earthquakes Graph in map
+ * 
+ */
+function showEarthquakesGraph() {
+  // alert("showEarthquakesGraph");
+  showDiv('assetDataWrapperWrapper');
+  // Add the close button
+  // document.getElementById("assetDataWrapperWrapper").innerHTML = `&lt;div>&lt;button type="button" class="btn btn-primary ms-4" onclick="closeAssetData()">Close Graph&lt;/button>'
+  //      +  &lt;div id="assetDataWrapper" class="vw-100" style="height:calc(100% - 165px);width:100%;border-color='blue';border-width=5px;"> 
+  //    &lt;/div>`;
+
+  document.getElementById("assetDataWrapperWrapper").innerHTML = `
+  &lt;div>
+    &lt;button type="button" class="btn btn-primary ms-4" onclick="closeAssetData()">Close Graph&lt;/button>
+    &lt;div id="assetDataWrapper" class="vw-100" style="height:calc(100% - 165px); width:100%; border-color=blue; border-width=5px;"> 
+    &lt;/div>
+  &lt;/div>`;
+
+  // we then need to set a short delay before we try to meaure the height and width of the DIV to hold the graph
+  // this is because the height and width are not correctly set until the DIV is fully rendered
+  // so use setTimeout to set the dealy - 1000 milli-seconds
+  // and then call a function called measureDiv to measure the div and start loading the graph
+  setTimeout(measureDivLoadGraph, 5000);
+
+}
+
+
+/**
+ * @function 
+ * 
+ * @description close Asset Data in map.
+ * 
+ */
+function closeAssetData() {
+  showDiv('mapWrapper');
+}
+
+/**
+ * @function 
+ * 
+ * @description measure Div Load Graph in map
+ * 
+ */
+function measureDivLoadGraph() {
+  let widtha = document.getElementById("assetDataWrapperWrapper").offsetWidth;
+  console.log("width is " + widtha);
+  let heighta = document.getElementById("assetDataWrapperWrapper").offsetHeight;
+
+  // add an  SVG element for the graph
+  document.getElementById("assetDataWrapper").innerHTML += `&lt;svg fill="blue" width="` + widtha + `" height="` + heighta + `" id="svg1">
+                &lt;/svg>&lt;div>`;
+
+  // Provide the URL for the earthquakes data 
+  // (NB - if you are using our data, 
+  // don't forget to use document.location.origin rather than hard-code the URL)
+  let dataURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson";
+  // download the data and call the function to create the graph
+  // this is another way of writing an AJAX request called a promise
+  // instead of using the success  parameter to define which function is called when the data is returned by the AJAX request, we use the .then option
+  // .then tells the code what to do as the next step - i.e. do this (retrieve the data from AJAX) THEN once that is done call this function
+  d3.json(dataURL).then(function (data) { showGraph(data) });
+
+}
+
+/**
+ * @function 
+ * 
+ * @description show Graph in map using for each
+ * 
+ */
+function showGraph(data) {
+  console.log(data);
+  data = data.features;
+  console.log(data);
+  let marginTop = 30;
+  let marginBottom = 260;
+  let marginLeft = 50;
+  let marginRight = 20;
+
+  // loop through the data and get the length of the x axis titles
+  let xLen = 0;
+  data.forEach(feature => {
+    if (xLen &lt; feature.properties.title.length) {
+      xLen = feature.properties.title.length;
+    }
+    console.log(xLen);
+  });
+
+  // adjust the space available for the x-axis titles, depending on the length of the text
+  if (xLen > 100) {
+    marginBottom = Math.round(xLen / 3, 0) + 120; // the 120 allows for the close button
+  }
+  else {
+    marginBottom = xLen + 120;  // the 120 allows for the close button 
+  }
+
+  // g is a grouping element
+  // in SVG this is the letter used to name the element that contains all the other SVG elements 
+  // so all the other SVG elements (e.g. the bars and text of the graph) are appended (added) to g
+  let svg = d3.select("#svg1"),
+    margin = { top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft },
+    width = svg.attr("width") - marginLeft - marginRight,
+    height = svg.attr("height") - marginTop - marginBottom,
+    x = d3.scaleBand().rangeRound([0, width]).padding(0.2),
+    y = d3.scaleLinear().rangeRound([height, 0]),
+    g = svg.append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+  x.domain(data.map(d => d.properties.title));
+  y.domain([0, d3.max(data, d => d.properties.mag)]);
+
+  // adapted from: https://bl.ocks.org/mbostock/7555321 10th March 2021/
+  g.append("g")
+    .attr("class", "axis axis-x")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x))
+    .selectAll(".tick text")
+    .call(wrap, x.bandwidth());
+
+
+  g.append("g")
+    .attr("class", "axis axis-y")
+    .call(d3.axisLeft(y).ticks(10).tickSize(8));
+
+  g.selectAll(".bar")
+    .data(data)
+    .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", d => x(d.properties.title))
+    .attr("y", d => y(d.properties.mag))
+    .attr("width", x.bandwidth())
+    .attr("height", d => height - y(d.properties.mag));
+}
+
+/**
+ * @function 
+ * 
+ * @description wrap the Graph to fix the screen in map
+ * 
+ */
+function wrap(text, width) {
+  text.each(function () {
+    let text = d3.select(this),
+      words = text.text().split(/\s+/).reverse(),
+      word,
+      line = [],
+      lineNumber = 0,
+      lineHeight = 1.1, // ems
+      y = text.attr("y"),
+      dy = parseFloat(text.attr("dy")),
+      tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+    while (word = words.pop()) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+      }
+    }
+  });
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="eData.dateOptions.html">dateOptions</a></li><li><a href="moment.tz.html">tz</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addArrayButtonListener">addArrayButtonListener</a></li><li><a href="global.html#addFormDataToCesium">addFormDataToCesium</a></li><li><a href="global.html#addLayerToArray">addLayerToArray</a></li><li><a href="global.html#addLayerToLayerControl">addLayerToLayerControl</a></li><li><a href="global.html#addLayerUsingArray">addLayerUsingArray</a></li><li><a href="global.html#addLayersToSelectArray">addLayersToSelectArray</a></li><li><a href="global.html#buildingsLayer">buildingsLayer</a></li><li><a href="global.html#calcDistanceFromFixedPoint">calcDistanceFromFixedPoint</a></li><li><a href="global.html#calcDistanceToPopPoint">calcDistanceToPopPoint</a></li><li><a href="global.html#calculateDistance">calculateDistance</a></li><li><a href="global.html#cancelFormSubmission">cancelFormSubmission</a></li><li><a href="global.html#cesiumLayers">cesiumLayers</a></li><li><a href="global.html#closeAssetData">closeAssetData</a></li><li><a href="global.html#closeDialog">closeDialog</a></li><li><a href="global.html#closeEarthquakeForm">closeEarthquakeForm</a></li><li><a href="global.html#closePetrolStationForm">closePetrolStationForm</a></li><li><a href="global.html#closePetrolStationLayer">closePetrolStationLayer</a></li><li><a href="global.html#closePriceQueueForm">closePriceQueueForm</a></li><li><a href="global.html#closeStationPriceForm">closeStationPriceForm</a></li><li><a href="global.html#currentPopup">currentPopup</a></li><li><a href="global.html#distanceFromPoint">distanceFromPoint</a></li><li><a href="global.html#drawHeatmap">drawHeatmap</a></li><li><a href="global.html#errorPositionifthereisanerrorinthelocationtrackingservice,runthiscode">errorPositionif there is an error in the location tracking service, run this code</a></li><li><a href="global.html#hideAllDivs">hideAllDivs</a></li><li><a href="global.html#hideCesium">hideCesium</a></li><li><a href="global.html#includeHTML">includeHTML</a></li><li><a href="global.html#insertResult">insertResult</a></li><li><a href="global.html#isValidDate">isValidDate</a></li><li><a href="global.html#keyPressZoomToPoint">keyPressZoomToPoint</a></li><li><a href="global.html#layerArrayList">layerArrayList</a></li><li><a href="global.html#layerControl">layerControl</a></li><li><a href="global.html#listLayersUsingArray">listLayersUsingArray</a></li><li><a href="global.html#loadArrayLayer">loadArrayLayer</a></li><li><a href="global.html#loadCesium">loadCesium</a></li><li><a href="global.html#loadGeoJSONCesiumURL">loadGeoJSONCesiumURL</a></li><li><a href="global.html#loadMap">loadMap</a></li><li><a href="global.html#locationTrackerId">locationTrackerId</a></li><li><a href="global.html#mapQueueLengthToValue">mapQueueLengthToValue</a></li><li><a href="global.html#markerGroup">markerGroup</a></li><li><a href="global.html#measureDivLoadGraph">measureDivLoadGraph</a></li><li><a href="global.html#measureDivLoadPetrolGraph">measureDivLoadPetrolGraph</a></li><li><a href="global.html#measureDivLoadPetrolGraph2">measureDivLoadPetrolGraph2</a></li><li><a href="global.html#mymap">mymap</a></li><li><a href="global.html#onMapClick">onMapClick</a></li><li><a href="global.html#onMapClickDiv">onMapClickDiv</a></li><li><a href="global.html#petrolStationLayer">petrolStationLayer</a></li><li><a href="global.html#pointToLayer">pointToLayer</a></li><li><a href="global.html#postResize">postResize</a></li><li><a href="global.html#processEarthquakeData">processEarthquakeData</a></li><li><a href="global.html#processPetrolStationData">processPetrolStationData</a></li><li><a href="global.html#processPriceQueueData">processPriceQueueData</a></li><li><a href="global.html#processWindowResize">processWindowResize</a></li><li><a href="global.html#removeAll3Ddata">removeAll3Ddata</a></li><li><a href="global.html#removeAllMapData">removeAllMapData</a></li><li><a href="global.html#removeArrayButtonListener">removeArrayButtonListener</a></li><li><a href="global.html#removeBuildings">removeBuildings</a></li><li><a href="global.html#removeClosestStations">removeClosestStations</a></li><li><a href="global.html#removeFlag">removeFlag</a></li><li><a href="global.html#removeLayerArray">removeLayerArray</a></li><li><a href="global.html#removeLayerUsingArray">removeLayerUsingArray</a></li><li><a href="global.html#removeNoPriceInfo">removeNoPriceInfo</a></li><li><a href="global.html#removeOptions">removeOptions</a></li><li><a href="global.html#removeQueueLengthUnknown">removeQueueLengthUnknown</a></li><li><a href="global.html#removeRooms">removeRooms</a></li><li><a href="global.html#removeSensors">removeSensors</a></li><li><a href="global.html#removeUniversity">removeUniversity</a></li><li><a href="global.html#roomsLayer">roomsLayer</a></li><li><a href="global.html#saveDialog">saveDialog</a></li><li><a href="global.html#sensorsLayer">sensorsLayer</a></li><li><a href="global.html#serviceUrl_id">serviceUrl_id</a></li><li><a href="global.html#showBuildings">showBuildings</a></li><li><a href="global.html#showCesium">showCesium</a></li><li><a href="global.html#showClosestStations">showClosestStations</a></li><li><a href="global.html#showDialog">showDialog</a></li><li><a href="global.html#showDiv">showDiv</a></li><li><a href="global.html#showEarthquakeForms">showEarthquakeForms</a></li><li><a href="global.html#showEarthquakesGraph">showEarthquakesGraph</a></li><li><a href="global.html#showGraph">showGraph</a></li><li><a href="global.html#showGraphStation">showGraphStation</a></li><li><a href="global.html#showGraphStation2">showGraphStation2</a></li><li><a href="global.html#showLayerList">showLayerList</a></li><li><a href="global.html#showLayerToLoad">showLayerToLoad</a></li><li><a href="global.html#showNoPriceInfo">showNoPriceInfo</a></li><li><a href="global.html#showPetrolStation">showPetrolStation</a></li><li><a href="global.html#showPosition">showPosition</a></li><li><a href="global.html#showPosition_Pr">showPosition_Pr</a></li><li><a href="global.html#showPriceDialog">showPriceDialog</a></li><li><a href="global.html#showQueueLengthUnknown">showQueueLengthUnknown</a></li><li><a href="global.html#showRooms">showRooms</a></li><li><a href="global.html#showSensors">showSensors</a></li><li><a href="global.html#showStationBarGarph">showStationBarGarph</a></li><li><a href="global.html#showStationBarGarph2">showStationBarGarph2</a></li><li><a href="global.html#showStationCesium">showStationCesium</a></li><li><a href="global.html#showStationHeatMap">showStationHeatMap</a></li><li><a href="global.html#showStationPriceDialog">showStationPriceDialog</a></li><li><a href="global.html#showStationShortestQueue">showStationShortestQueue</a></li><li><a href="global.html#showUniversity">showUniversity</a></li><li><a href="global.html#showUserRanking">showUserRanking</a></li><li><a href="global.html#switchLocationServicesOn_Pr">switchLocationServicesOn_Pr</a></li><li><a href="global.html#swtichLocationServicesOff">swtichLocationServicesOff</a></li><li><a href="global.html#swtichLocationServicesOn">swtichLocationServicesOn</a></li><li><a href="global.html#swtichLocationServicesOn2">swtichLocationServicesOn2</a></li><li><a href="global.html#testInsertData">testInsertData</a></li><li><a href="global.html#universityLayer">universityLayer</a></li><li><a href="global.html#url">url</a></li><li><a href="global.html#user_id">user_id</a></li><li><a href="global.html#viewer">viewer</a></li><li><a href="global.html#wrap">wrap</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 17 2024 06:07:22 GMT+0100 (British Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

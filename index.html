@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <title>3D Data Architectures for Web Visualisation</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- CesiumJS Stylesheet -->
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Cesium.js"></script>
+
+
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
+    <!-- the following links incorporate the CSS required for custom icon creation -->
+    <link rel="stylesheet" href="css/ionicons.min.css">
+    <link rel="stylesheet" href="css/leaflet.awesome-markers.css">
+    <script src="js/leaflet.awesome-markers.js"></script>
+
+    <link rel="stylesheet" href="css/myStyle.css">
+
+    <style>
+        body {
+            overflow-y: hidden;
+            overflow-x: hidden;
+
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- Reference the dialogs at the top of <head> section. -->
+    <script src="js/includeDialogs.js"></script>
+    <div data-w3-include-html="./dialogs/dialogs.txt"></div>
+    <div data-w3-include-html="./dialogs/layerArrayDialogs.txt"></div>
+    <div data-w3-include-html="./dialogs/BimVisDialog.txt"></div>
+    <script>includeHTML();</script>
+
+    <div class="container-fluid position-relative bg-warning p-0">
+        <!-- Spinner Start -->
+        <div id="spinner"
+            class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+
+
+
+        <!-- Content Start -->
+        <div id="wrapper" class="content d-flex flex-column">
+
+            <!-- Navbar Start -->
+            <nav class="navbar bg-light navbar-expand fixed-top py-0 px-4">
+                <a href="#" class="navbar-brand d-flex d-lg-none me-4">
+                    <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
+                </a>
+                <a href="#" class="sidebar-toggler flex-shrink-0">
+                    <i class="fa fa-bars"></i>
+                </a>
+                <!-- <form class="d-none d-md-flex ms-4">
+                    <input class="form-control border-0" type="search" placeholder="Search"
+                        onclick="alert('Placeholder for search');">
+                </form> -->
+
+                <div class="search-bar">
+                    <form class="d-none d-md-flex ms-4">
+                        <input class="form-control border-0" type="search" placeholder="Search" id="searchInput">
+                    </form>
+                </div>
+
+                <div id="clickCoordinates">Click on map to see coordinates</div>
+                <!-- <div id="scaleDisplay">Scale: N/A</div> -->
+                <div class="navbar-nav align-items-right ms-auto">
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fa fa-bell me-lg-2"></i>
+                            <span class="d-none d-lg-inline-flex">Help Menu</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                            <a href="#" class="dropdown-item">
+                                <h6 class="fw-normal mb-0">Help 1</h6>
+                                <small>Answer Questions</small>
+                            </a>
+                            <hr class="dropdown-divider">
+                            <a href="#" class="dropdown-item">
+                                <h6 class="fw-normal mb-0">Help 2</h6>
+                                <small>Add Quiz Points</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </nav><!-- Navbar End -->
+
+            <!-- Sidebar Start -->
+            <div class="sidebar pe-4 pb-3 bg-light">
+                <nav class="navbar bg-light navbar-light">
+                    <a href="#" class="navbar-brand mx-4 mb-3">
+                        <h3 class="text-primary"><i class="fa fa-hashtag me-2"></i></h3>
+                    </a>
+                    <a href="#" class="sidebar-toggler flex-shrink-0 d-lg-none">
+                        <i class="fa fa-bars"></i>
+                    </a>
+                    <div class="d-flex align-items-center ms-4 mb-4">
+                        <div class="position-relative">
+                            <img class="rounded-circle" src="img/icon.jpg" alt="" style="width: 40px; height: 40px;">
+                            <div
+                                class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1">
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <b class="mb-0">AsherCh00</b>
+                            <!-- <span>AsherCh00</span> -->
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="navbar-nav">
+                    <!-- Divider -->
+                    <hr class="sidebar-divider">
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i
+                                class="fa fa-laptop me-2"></i>3D Globe</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <!-- <a class="dropdown-item" href="#" onclick="removeAllLayers();">Remove All GeoJson</a> -->
+                            <a class="dropdown-item" href="#" onclick="openDialog();">Modify Data</a>
+                            <a id="measureLink" class="dropdown-item" href="#" onclick="toggleMeasure()">Measure</a>
+                            <a class="dropdown-item" href="#" onclick="hideShowObject();">Hide/Show</a>
+                            <a class="dropdown-item" href="#" onclick="defaultColor();">Default GeoJSON Color</a>
+                            <a class="dropdown-item" href="#" onclick="bboxSelect();">Bounding Box Selection </a>
+                            <a class="dropdown-item" href="#" onclick="hideCesium();">Hide Cesium</a>
+                            
+                            <!-- <a class="dropdown-item" href="#" onclick="showCesium();">Show Cesium</a> -->
+                            <!-- <a class="dropdown-item" href="#" onclick="getPostgreSqlData();">Add PostgreSqlData</a> -->
+                            <!-- <a class="dropdown-item" href="#" onclick="addMongoBenchmark();">Add MongoDB Benchmark Geojson</a> -->
+                            <!-- <a class="dropdown-item" href="#" onclick="showMongoBenchmark();">Show MongoDB Benchmark Geojson</a> -->
+                            <!-- <a class="dropdown-item" href="#" onclick="addPostgreSqlBenchmark();">Add PostgreSql Benchmark Geojson</a> -->
+                            <!-- <a class="dropdown-item" href="#" onclick="showPostgreSqlBenchmark();">Show PostgreSql Benchmark Geojson</a> -->
+                            <!-- <a class="dropdown-item" href="#" onclick="showAddGeo();">show GeoJson</a>
+                            <a class="dropdown-item" href="#" onclick="showExterior();">Add Tileset</a> -->
+                            <!-- <a class="dropdown-item" href="#" onclick="testRemoveTileset();">Remove Tileset</a> -->
+                            <!-- <a class="dropdown-item" href="#" onclick="removeAllLayers();">Remove all 3D data</a> -->
+                            
+                            <!-- <a class="dropdown-item" href="#" onclick="countLayer();">Count Layer</a> -->
+
+                        </div>
+                    </div>
+
+                </div> <!-- navbar-nav end -->
+            </div>
+            <!-- Sidebar End -->
+
+            <!-- <div id="toolbar">
+                <button id="homeButton">Home</button>
+                <button id="openDialogButton" onclick="openDialog();">Open Dialog</button>
+                <select id="functionSelect">
+                    <option value="none">Select Function</option>
+                    <option value="addGeo">Add GeoJson</option>
+                    <option value="addSql">Add SqlData</option>
+                    <option value="VisGeo">Show GeoJson</option>
+                    <option value="RemGeo">Remove GeoJson</option>
+
+                </select>
+            </div> -->
+
+            <!-- <div id="BimVisForm" class="myDialog">
+                <p><b>Submit to Report</b></p><br>
+                <p>
+                    <label>Asset id:
+                        <input id="assetId" name="assetId" type="text" size="20">
+                    </label>
+                    <br>
+                    <label>Suggestions:
+                        <input id="sug" name="sug" type="text" size="20" rows="5">
+                    </label>
+                </p>
+            
+                <div>
+                    <button id="closeButton" onclick="cancelSubmissionBim(event)">Cancel</button>
+                    <button id="saveBtn" onclick="SubmissionBim(event)">Submit</button>
+                </div>
+            </div> -->
+
+            <div class="container-fluid px-0">
+                <div class="row d-flex">
+                    <div class="col d-flex">
+                        <!-- mapwrapper start -->
+                        <div id="mapWrapper" class="col vh-100 collapse hide" aria-expanded="true"
+                            role="region" style="margin-top:65px;z-index:0;">
+                            <div id="mapid" class=" bg-danger" style="height:calc(100% - 65px);">
+                            </div> <!-- map id -->
+                        </div> <!-- mapwrapper end -->
+
+                        <!-- <div id="cesiumWrapper" class="col vh-100 collapse hide" aria-expanded="true" role="region"
+                            style="margin-top:65px;z-index:0;">
+                            <div id="cesiumContainer" class=" bg-danger" style="height:calc(100% - 65px);">
+                            </div> cesium id
+                            <div id="dropdownMenu">
+                                <select id="menu">
+                                    <option value="option1">Option 1</option>
+                                    <option value="option2">Option 2</option>
+                                    <option value="option3">Option 3</option>
+                                </select>
+                            </div>
+                        </div> cesium wrapper -->
+
+                        <div id="cesiumWrapper" class="col vh-100 collapse show bg-warning" aria-expanded="true" 
+                        role="region" style="margin-top:65px;z-index:0;">
+                            <div id="cesiumContainer" class="bg-danger" style="height:calc(100% - 65px);"></div>
+                        </div><!-- cesium wrapper -->
+                        <div id="selectionBox"></div>
+
+
+
+                        <!-- asset data wrapper wrapper wrapper -->
+                        <div id="assetDataWrapperWrapper" class="col vh-100 collapse hide" role="region"
+                            aria-expanded="true"
+                            style="background-color:lightgray; margin-top:65px;margin-bottom:100px;z-index:0;">
+                        </div>
+                        <!-- asset data wrapper wrapper wrapper -->
+
+                        <!-- map ability wrapper wrapper -->
+                        <div id="mapAbilityWrapper" role="region" class="col vh-100 collapse hide" aria-expanded="true"
+                            style="background-color:white; margin-top:65px;margin-bottom:100px;z-index:0;">
+                        </div>
+                        <!-- map ability wrapper wrapper -->
+                    </div> <!-- col d-flex -->
+                </div> <!-- row d-flex -->
+            </div> <!-- container-fluid-->
+
+
+        </div> <!-- end of the content wrapper -->
+    </div> <!-- container fluid that wraps everything -->
+
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/chart/chart.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- practical w8.2 -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/bootstrapTemplate.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/utilities.js"></script>
+    <script src="js/mapUtilities.js"></script>
+    <!-- <script src="js/centennial.js"></script>
+    <script src="js/earthquakes.js"></script>
+    <script src="js/graph.js"></script>
+    <script src="js/petrolStation.js"></script>
+    <script src="js/priceQueue.js"></script>
+    <script src="js/layerArrays.js"></script>
+    <script src="js/insertData.js"></script> -->
+    <script src="js/locationServices.js"></script>
+    <script src="js/cesium3D.js"></script>
+    <script src="js/cesium3D_zoomLayering.js"></script>
+    <script src="js/cesium_usability.js"></script>
+    <script src="js/cesium_benchmark.js"></script>
+    <!-- <script src = "js/toolBarMenu.js"></script> -->
+
+
+</body>
+
+</html>

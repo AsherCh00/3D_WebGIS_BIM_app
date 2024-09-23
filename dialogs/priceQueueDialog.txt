@@ -1,0 +1,24 @@
+<div id="priceQueueForm">
+    <!-- <p><b>Petrol Station Price/Queue</b></p> -->
+    <input id="stationID" name="stationID" type="hidden">
+    <input id="userID" name="userID" type="hidden">
+    <!-- <input id="lastPetrolPrice" name="lastPetrolPrice" type="hidden" value="0">-->
+    
+
+    
+    <label>Inspection Date:
+    <input id="inspectionDate" name="inspectionDate" type="text">
+    </label>
+
+    <p>Queue Length:</p>
+    <!-- 
+    <input type="radio" id="veryLongQueue" name="queueLength" value="Queue is very long (over 15 minutes)">
+    <label for="veryLongQueue">Queue is very long (over 15 minutes)</label><br>
+
+    <p><label for="petrolPrice">Price of Unleaded Petrol in £ per litre:</label>
+    <input id="petrolPrice" name="petrolPrice" type="text"></p>
+
+    <button id="saveBtn" onclick="processPriceQueueData()">Save Price/Queue</button>
+     -->
+</div>
+

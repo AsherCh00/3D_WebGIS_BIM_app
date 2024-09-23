@@ -1,0 +1,57 @@
+<dialog id="layerToLoadArray">
+  <form>
+    <p>
+      <label>Layer Name:
+        <input id="loadArrayLayerName" type="text" size="20"></input>
+      </label>
+      <br>
+      <label>URL:
+        <input id="loadArrayLayerURL" type="text" size="20"></input>
+      </label>
+    </p>
+    <div>
+      <button value="cancel" formmethod="dialog">Cancel</button>
+      <button id="addLayerBtnArray" value="default">Submit</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="layerToRemoveArray">
+  <form>
+    <p>
+      <label>Layer Name:
+        <select id="listOfArrayLayers"></select>
+      </label>
+    </p>
+    <div>
+      <button value="cancel" formmethod="dialog">Cancel</button>
+      <button id="removeLayerBtnArray" value="default">Submit</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="listAllLayersArray">
+  <form>
+    <p>
+      <label>Layer Name:
+        <select id="listAllArrayLayersSelect" size="3"></select>
+      </label>
+    </p>
+    <div>
+      <button value="cancel" formmethod="dialog">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="listStationArray">
+  <form>
+    <p>
+      <label>Petrol Stations Name:
+        <select id="listStationArraySelect" size="5"></select>
+      </label>
+    </p>
+    <div>
+      <button value="cancel" formmethod="dialog">Cancel</button>
+    </div>
+  </form>
+</dialog>

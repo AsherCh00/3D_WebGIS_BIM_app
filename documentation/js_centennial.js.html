@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: js/centennial.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: js/centennial.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict"
+
+/**
+ * buildingsLayer
+ * 
+ * a global variable to store the buildings layer once it has been added to the map
+ * global as will need to be referened by the buildings remove functionality
+ * 
+ */
+
+let buildingsLayer;
+
+/**
+ * universityLayer
+ * 
+ * a global variable to store the university Layer once it has been added to the map
+ * global as will need to be referened by the buildings remove functionality
+ * 
+ */
+let universityLayer;
+
+/**
+ * roomsLayer
+ * 
+ * a global variable to store the rooms Layer once it has been added to the map
+ * global as will need to be referened by the buildings remove functionality
+ * 
+ */
+let roomsLayer;
+
+/**
+ * sensorsLayer
+ * 
+ * a global variable to store the sensors Layer once it has been added to the map
+ * global as will need to be referened by the buildings remove functionality
+ * 
+ */
+let sensorsLayer;
+
+/**
+ * @function showBuildings
+ * 
+ * @description show the buildings layer, assume that the data is stored in a data directory on the local server
+ * 
+ */
+
+function showBuildings() {
+    // as we are hosting the data on our server, we don't need to provide the full https:// ... detail
+    let layerURL = document.location.origin + "/api/geojson24/getGeoJSON/ucfscde/buildings/building_id/location";
+
+    // If the layer was existed, remove it.
+    if (buildingsLayer) {
+        mymap.removeLayer(buildingsLayer);
+    }
+
+    $.ajax({
+        url: layerURL,
+        crossDomain: true,
+        success: function (result) {
+            // load the geoJSON layer
+            buildingsLayer = L.geoJson(result,
+                {
+                    // the onEachFeature command loops through every featulre in the GeoJSON dataset and creates the popup and style for each one
+                    onEachFeature: function (f, l) {
+                        l.bindPopup('&lt;pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '&lt;/pre>');
+                    } // end of point to layer
+                }).addTo(mymap);
+
+            // change the map zoom so that all the data is shown
+            mymap.fitBounds(buildingsLayer.getBounds());
+
+        }// end of the inner function
+    }); // end of the ajax request
+}
+
+/**
+ * @function removeBuildings
+ * 
+ * @description remove the buildings layer.
+ * 
+ */
+function removeBuildings() {
+    try {
+        mymap.removeLayer(buildingsLayer);
+    } catch (err) {
+
+    }
+}
+
+/**
+ * @function showUniversity
+ * 
+ * @description show the university layer, assume that the data is stored in a data directory on the local server
+ * 
+ */
+
+function showUniversity() {
+    // as we are hosting the data on our server, we don't need to provide the full https:// ... detail
+    let layerURL = document.location.origin + "/api/geojson24/getGeoJSON/ucfscde/university/university_id/location";
+
+    // If the layer was existed, remove it.
+    if (universityLayer) {
+        mymap.removeLayer(universityLayer);
+    }
+
+    $.ajax({
+        url: layerURL,
+        crossDomain: true,
+        success: function (result) {
+            // load the geoJSON layer
+            universityLayer = L.geoJson(result,
+                {
+                    // the onEachFeature command loops through every featulre in the GeoJSON dataset and creates the popup and style for each one
+                    onEachFeature: function (f, l) {
+                        l.bindPopup('&lt;pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '&lt;/pre>');
+                    } // end of point to layer
+                }).addTo(mymap);
+
+            // change the map zoom so that all the data is shown
+            mymap.fitBounds(universityLayer.getBounds());
+
+        }// end of the inner function
+    }); // end of the ajax request
+}
+
+/**
+ * @function removeUniversity
+ * 
+ * @description remove the university layer.
+ * 
+ */
+function removeUniversity() {
+    try {
+        mymap.removeLayer(universityLayer);
+    } catch (err) {
+
+    }
+}
+
+/**
+ * @function showRooms
+ * 
+ * @description show the rooms layer, assume that the data is stored in a data directory on the local server
+ * 
+ */
+
+function showRooms() {
+    // as we are hosting the data on our server, we don't need to provide the full https:// ... detail
+    let layerURL = document.location.origin + "/api/geojson24/getGeoJSON/ucfscde/rooms/room_id/location";
+
+    // If the layer was existed, remove it.
+    if (roomsLayer) {
+        mymap.removeLayer(roomsLayer);
+    }
+
+    $.ajax({
+        url: layerURL,
+        crossDomain: true,
+        success: function (result) {
+            // load the geoJSON layer
+            roomsLayer = L.geoJson(result,
+                {
+                    // the onEachFeature command loops through every featulre in the GeoJSON dataset and creates the popup and style for each one
+                    onEachFeature: function (f, l) {
+                        l.bindPopup('&lt;pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '&lt;/pre>');
+                    } // end of point to layer
+                }).addTo(mymap);
+
+            // change the map zoom so that all the data is shown
+            mymap.fitBounds(roomsLayer.getBounds());
+
+        }// end of the inner function
+    }); // end of the ajax request
+}
+
+/**
+ * @function removeRooms
+ * 
+ * @description remove the rooms layer.
+ * 
+ */
+function removeRooms() {
+    try {
+        mymap.removeLayer(roomsLayer);
+    } catch (err) {
+
+    }
+}
+
+/**
+ * @function showSensors
+ * 
+ * @description show the sensors layer, assume that the data is stored in a data directory on the local server
+ * 
+ */
+
+function showSensors() {
+    // as we are hosting the data on our server, we don't need to provide the full https:// ... detail
+    let layerURL = document.location.origin + "/api/geojson24/getGeoJSON/ucfscde/temperature_sensors/sensor_id/location";
+
+    // If the layer was existed, remove it.
+    if (sensorsLayer) {
+        mymap.removeLayer(sensorsLayer);
+    }
+
+    $.ajax({
+        url: layerURL,
+        crossDomain: true,
+        success: function (result) {
+            // load the geoJSON layer
+            sensorsLayer = L.geoJson(result,
+                {
+                    // the onEachFeature command loops through every featulre in the GeoJSON dataset and creates the popup and style for each one
+                    onEachFeature: function (f, l) {
+                        l.bindPopup('&lt;pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '&lt;/pre>');
+                    } // end of point to layer
+                }).addTo(mymap);
+
+            // change the map zoom so that all the data is shown
+            mymap.fitBounds(sensorsLayer.getBounds());
+
+        }// end of the inner function
+    }); // end of the ajax request
+}
+
+/**
+ * @function removeSensors
+ * 
+ * @description remove the sensors layer.
+ * 
+ */
+function removeSensors() {
+    try {
+        mymap.removeLayer(sensorsLayer);
+    } catch (err) {
+
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="eData.dateOptions.html">dateOptions</a></li><li><a href="moment.tz.html">tz</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addArrayButtonListener">addArrayButtonListener</a></li><li><a href="global.html#addFormDataToCesium">addFormDataToCesium</a></li><li><a href="global.html#addLayerToArray">addLayerToArray</a></li><li><a href="global.html#addLayerToLayerControl">addLayerToLayerControl</a></li><li><a href="global.html#addLayerUsingArray">addLayerUsingArray</a></li><li><a href="global.html#addLayersToSelectArray">addLayersToSelectArray</a></li><li><a href="global.html#buildingsLayer">buildingsLayer</a></li><li><a href="global.html#calcDistanceFromFixedPoint">calcDistanceFromFixedPoint</a></li><li><a href="global.html#calcDistanceToPopPoint">calcDistanceToPopPoint</a></li><li><a href="global.html#calculateDistance">calculateDistance</a></li><li><a href="global.html#cancelFormSubmission">cancelFormSubmission</a></li><li><a href="global.html#cesiumLayers">cesiumLayers</a></li><li><a href="global.html#closeAssetData">closeAssetData</a></li><li><a href="global.html#closeDialog">closeDialog</a></li><li><a href="global.html#closeEarthquakeForm">closeEarthquakeForm</a></li><li><a href="global.html#closePetrolStationForm">closePetrolStationForm</a></li><li><a href="global.html#closePetrolStationLayer">closePetrolStationLayer</a></li><li><a href="global.html#closePriceQueueForm">closePriceQueueForm</a></li><li><a href="global.html#closeStationPriceForm">closeStationPriceForm</a></li><li><a href="global.html#currentPopup">currentPopup</a></li><li><a href="global.html#distanceFromPoint">distanceFromPoint</a></li><li><a href="global.html#drawHeatmap">drawHeatmap</a></li><li><a href="global.html#errorPositionifthereisanerrorinthelocationtrackingservice,runthiscode">errorPositionif there is an error in the location tracking service, run this code</a></li><li><a href="global.html#hideAllDivs">hideAllDivs</a></li><li><a href="global.html#hideCesium">hideCesium</a></li><li><a href="global.html#includeHTML">includeHTML</a></li><li><a href="global.html#insertResult">insertResult</a></li><li><a href="global.html#isValidDate">isValidDate</a></li><li><a href="global.html#keyPressZoomToPoint">keyPressZoomToPoint</a></li><li><a href="global.html#layerArrayList">layerArrayList</a></li><li><a href="global.html#layerControl">layerControl</a></li><li><a href="global.html#listLayersUsingArray">listLayersUsingArray</a></li><li><a href="global.html#loadArrayLayer">loadArrayLayer</a></li><li><a href="global.html#loadCesium">loadCesium</a></li><li><a href="global.html#loadGeoJSONCesiumURL">loadGeoJSONCesiumURL</a></li><li><a href="global.html#loadMap">loadMap</a></li><li><a href="global.html#locationTrackerId">locationTrackerId</a></li><li><a href="global.html#mapQueueLengthToValue">mapQueueLengthToValue</a></li><li><a href="global.html#markerGroup">markerGroup</a></li><li><a href="global.html#measureDivLoadGraph">measureDivLoadGraph</a></li><li><a href="global.html#measureDivLoadPetrolGraph">measureDivLoadPetrolGraph</a></li><li><a href="global.html#measureDivLoadPetrolGraph2">measureDivLoadPetrolGraph2</a></li><li><a href="global.html#mymap">mymap</a></li><li><a href="global.html#onMapClick">onMapClick</a></li><li><a href="global.html#onMapClickDiv">onMapClickDiv</a></li><li><a href="global.html#petrolStationLayer">petrolStationLayer</a></li><li><a href="global.html#pointToLayer">pointToLayer</a></li><li><a href="global.html#postResize">postResize</a></li><li><a href="global.html#processEarthquakeData">processEarthquakeData</a></li><li><a href="global.html#processPetrolStationData">processPetrolStationData</a></li><li><a href="global.html#processPriceQueueData">processPriceQueueData</a></li><li><a href="global.html#processWindowResize">processWindowResize</a></li><li><a href="global.html#removeAll3Ddata">removeAll3Ddata</a></li><li><a href="global.html#removeAllMapData">removeAllMapData</a></li><li><a href="global.html#removeArrayButtonListener">removeArrayButtonListener</a></li><li><a href="global.html#removeBuildings">removeBuildings</a></li><li><a href="global.html#removeClosestStations">removeClosestStations</a></li><li><a href="global.html#removeFlag">removeFlag</a></li><li><a href="global.html#removeLayerArray">removeLayerArray</a></li><li><a href="global.html#removeLayerUsingArray">removeLayerUsingArray</a></li><li><a href="global.html#removeNoPriceInfo">removeNoPriceInfo</a></li><li><a href="global.html#removeOptions">removeOptions</a></li><li><a href="global.html#removeQueueLengthUnknown">removeQueueLengthUnknown</a></li><li><a href="global.html#removeRooms">removeRooms</a></li><li><a href="global.html#removeSensors">removeSensors</a></li><li><a href="global.html#removeUniversity">removeUniversity</a></li><li><a href="global.html#roomsLayer">roomsLayer</a></li><li><a href="global.html#saveDialog">saveDialog</a></li><li><a href="global.html#sensorsLayer">sensorsLayer</a></li><li><a href="global.html#serviceUrl_id">serviceUrl_id</a></li><li><a href="global.html#showBuildings">showBuildings</a></li><li><a href="global.html#showCesium">showCesium</a></li><li><a href="global.html#showClosestStations">showClosestStations</a></li><li><a href="global.html#showDialog">showDialog</a></li><li><a href="global.html#showDiv">showDiv</a></li><li><a href="global.html#showEarthquakeForms">showEarthquakeForms</a></li><li><a href="global.html#showEarthquakesGraph">showEarthquakesGraph</a></li><li><a href="global.html#showGraph">showGraph</a></li><li><a href="global.html#showGraphStation">showGraphStation</a></li><li><a href="global.html#showGraphStation2">showGraphStation2</a></li><li><a href="global.html#showLayerList">showLayerList</a></li><li><a href="global.html#showLayerToLoad">showLayerToLoad</a></li><li><a href="global.html#showNoPriceInfo">showNoPriceInfo</a></li><li><a href="global.html#showPetrolStation">showPetrolStation</a></li><li><a href="global.html#showPosition">showPosition</a></li><li><a href="global.html#showPosition_Pr">showPosition_Pr</a></li><li><a href="global.html#showPriceDialog">showPriceDialog</a></li><li><a href="global.html#showQueueLengthUnknown">showQueueLengthUnknown</a></li><li><a href="global.html#showRooms">showRooms</a></li><li><a href="global.html#showSensors">showSensors</a></li><li><a href="global.html#showStationBarGarph">showStationBarGarph</a></li><li><a href="global.html#showStationBarGarph2">showStationBarGarph2</a></li><li><a href="global.html#showStationCesium">showStationCesium</a></li><li><a href="global.html#showStationHeatMap">showStationHeatMap</a></li><li><a href="global.html#showStationPriceDialog">showStationPriceDialog</a></li><li><a href="global.html#showStationShortestQueue">showStationShortestQueue</a></li><li><a href="global.html#showUniversity">showUniversity</a></li><li><a href="global.html#showUserRanking">showUserRanking</a></li><li><a href="global.html#switchLocationServicesOn_Pr">switchLocationServicesOn_Pr</a></li><li><a href="global.html#swtichLocationServicesOff">swtichLocationServicesOff</a></li><li><a href="global.html#swtichLocationServicesOn">swtichLocationServicesOn</a></li><li><a href="global.html#swtichLocationServicesOn2">swtichLocationServicesOn2</a></li><li><a href="global.html#testInsertData">testInsertData</a></li><li><a href="global.html#universityLayer">universityLayer</a></li><li><a href="global.html#url">url</a></li><li><a href="global.html#user_id">user_id</a></li><li><a href="global.html#viewer">viewer</a></li><li><a href="global.html#wrap">wrap</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 17 2024 06:07:22 GMT+0100 (British Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<dialog id="BimVisForm">
+    <p><b>Submit Your Modification: </b></p>
+    <p>
+        <label id="assetLabel">Asset id:</label>
+        <!--  <input id="assetId" name="assetId" type="text" size="20" placeholder="Enter Asset ID"> -->
+        <br>
+        <input type="radio" id="1" name="attribute" value="Project_Ad"><label for="1">Address</label><br>
+        <input type="radio" id="2" name="attribute" value="Project_Is"><label for="2">Issue Date</label><br>
+        <input type="radio" id="3" name="attribute" value="Project_Na"><label for="3">Project Name</label><br>
+        <input type="radio" id="4" name="attribute" value="Project_Nu"><label for="4">Project Number</label><br>
+        <input type="radio" id="5" name="attribute" value="Project_St"><label for="5">Project Status</label><br>
+        <input type="radio" id="6" name="attribute" value="heightleve"><label for="6">Height Level</label><br>
+
+        <label>Modified value:</label>
+        <input id="modiValue" name="modiValue" type="text" size="20" rows="5" placeholder="Enter Value"><br>
+        <label>Suggestions:</label>
+        <input id="sug" name="sug" type="text" size="20" rows="5" placeholder="Enter Suggestions">
+        
+    </p>
+
+    <div>
+        <button id="closeButton" onclick="cancelSubmissionBim(event)">Cancel</button>
+        <button id="saveBtn" onclick="SubmissionBim(event)">Submit</button>
+    </div>
+</dialog>

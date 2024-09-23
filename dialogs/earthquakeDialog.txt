@@ -1,0 +1,17 @@
+<div id="earthquakeForm">
+    <p><b>Report Any Damange You Can See </b>
+    </p>
+    <p>
+      <label>Name of Reporter:
+        <input id="reporterName"  name="reporterName" type="text" size="20">
+      </label>
+      <br>
+      <label>Damaged Observed:
+        <textarea id="damagedObserved" name="damagedObserved" size="20" rows="3"></textarea>
+      </label>
+    </p>
+    <div>
+      <button id="closeButton" onclick="closeEarthquakeForm()">Cancel</button>
+      <button id="saveBtn" onclick="processEarthquakeData()">Save Report</button>
+    </div>
+</div>   

@@ -1,0 +1,21 @@
+<div id="petrolStationForm">
+    <!-- <p><b>Submit to Report Petrol Station You Can See </b></p> -->
+
+    <p>
+        <input id="userID"  name="userID" type="hidden" size="20">
+        
+      <label>Petrol Station Name:
+        <input id="stationName" name="stationName" type="text" size="20">
+      </label>
+      <br>
+      <br>
+      <label>Last Inspected:
+        <input id="lastInspected" name="lastInspected" type="text" size="20" rows="3">
+      </label>
+      <br>
+    </p>
+    <div>
+      <button id="closeButton" onclick="cancelFormSubmission(event)">Cancel</button>
+      <button id="saveBtn" onclick="processPetrolStationData(event)">Submit</button>
+    </div>
+</div>   
