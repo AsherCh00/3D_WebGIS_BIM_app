@@ -1,2 +1,1 @@
-# cege0043-app-template
-Template repository for the app (front end) code for CEGE0043
+# 3D_WebGIS_BIM_app
